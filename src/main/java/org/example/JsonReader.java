@@ -14,21 +14,18 @@ import java.util.stream.Collectors;
 
 public class JsonReader {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     public JsonReader(String path){
         File jsonFile = new File(path);
         try {
-
+            ObjectMapper mapper = new ObjectMapper();
             List<Status> statuses = mapper.readValue(jsonFile, new TypeReference<List<Status>>() {});
 
             statuses = statuses.stream()
                     .filter(status -> status.getKontaktTs().after(Timestamp.valueOf("2017-07-01 00:00:00")))
                     .collect(Collectors.toList());
 
-            Collections.sort(statuses, new StatusComparator());
-
             List<String[]> listData = statuses.stream()
+                                                .sorted(new StatusComparator())
                                                 .map(Status::toStringArray)
                                                 .collect(Collectors.toList());
 
