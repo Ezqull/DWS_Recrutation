@@ -8,11 +8,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JsonReader {
+
+    private static final String TIMESTAMP_FILTER = "2017-07-01 00:00:00";
+    private static final String OUTPUT_FILE_NAME = "filtered_statuses.csv";
 
     public JsonReader(String path){
         File jsonFile = new File(path);
@@ -21,7 +23,7 @@ public class JsonReader {
             List<Status> statuses = mapper.readValue(jsonFile, new TypeReference<List<Status>>() {});
 
             statuses = statuses.stream()
-                    .filter(status -> status.getKontaktTs().after(Timestamp.valueOf("2017-07-01 00:00:00")))
+                    .filter(status -> status.getKontaktTs().after(Timestamp.valueOf(TIMESTAMP_FILTER)))
                     .collect(Collectors.toList());
 
             List<String[]> listData = statuses.stream()
@@ -29,7 +31,7 @@ public class JsonReader {
                                                 .map(Status::toStringArray)
                                                 .collect(Collectors.toList());
 
-            try (CSVWriter writer = new CSVWriter(new FileWriter("filtered_statuses.csv"))) {
+            try (CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_FILE_NAME))) {
                 writer.writeAll(listData);
             }
 
