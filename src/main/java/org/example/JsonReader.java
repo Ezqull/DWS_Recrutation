@@ -18,30 +18,25 @@ public class JsonReader {
 
 
     public JsonReader(String path){
-        List<String[]> dataToWrite = readData(path);
+        List<Status> dataToWrite = readData(path);
         writeDataToCsv(dataToWrite);
     }
 
-    private List<String[]> readData(String path){
-        File jsonFile = new File(path);
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            List<Status> statuses = mapper.readValue(jsonFile, new TypeReference<List<Status>>() {});
-            statuses = filterData(statuses);
-
-            return statuses.stream()
-                    .sorted(new StatusComparator())
-                    .map(Status::toStringArray)
-                    .collect(Collectors.toList());
-
+    private void writeDataToCsv(List<Status> dataToWrite){
+        try (CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_FILE_NAME))) {
+            writer.writeAll(convertToStringArrayList(dataToWrite));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void writeDataToCsv(List<String[]> dataToWrite){
-        try (CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_FILE_NAME))) {
-            writer.writeAll(dataToWrite);
+    private List<Status> readData(String path){
+        File jsonFile = new File(path);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<Status> statuses = mapper.readValue(jsonFile, new TypeReference<List<Status>>() {});
+            return filterData(statuses);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -50,6 +45,13 @@ public class JsonReader {
     private List<Status> filterData(List<Status> dataToFilter){
         return dataToFilter.stream()
                 .filter(status -> status.getKontaktTs().after(Timestamp.valueOf(TIMESTAMP_FILTER)))
+                .sorted(new StatusComparator())
+                .collect(Collectors.toList());
+    }
+
+    private List<String[]> convertToStringArrayList(List<Status> dataToConvert){
+        return dataToConvert.stream()
+                .map(Status::toStringArray)
                 .collect(Collectors.toList());
     }
 }
