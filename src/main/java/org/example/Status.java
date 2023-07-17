@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +24,9 @@ public class Status {
     @JsonAlias("kontakt_ts")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp kontaktTs;
+
+    public String[] toStringArray(){
+        String[] array = {String.valueOf(kontaktId), String.valueOf(klientId), String.valueOf(pracownikId), status, String.valueOf(kontaktTs)};
+        return array;
+    }
 }
