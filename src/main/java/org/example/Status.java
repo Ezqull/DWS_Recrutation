@@ -26,7 +26,6 @@ public class Status {
     private Timestamp kontaktTs;
 
     public String[] toStringArray(){
-        String[] array = {String.valueOf(kontaktId), String.valueOf(klientId), String.valueOf(pracownikId), status, String.valueOf(kontaktTs)};
-        return array;
+        return new String[]{String.valueOf(kontaktId), String.valueOf(klientId), String.valueOf(pracownikId), status, String.valueOf(kontaktTs)};
     }
 }
