@@ -1,34 +1,28 @@
-package org.example;
+package org.example.converter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencsv.CSVWriter;
+import lombok.Getter;
+import org.example.model.Status;
+import org.example.model.comparator.StatusComparator;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public class JsonReader {
 
     private static final String TIMESTAMP_FILTER = "2017-07-01 00:00:00";
-    private static final String OUTPUT_FILE_NAME = "filtered_statuses.csv";
+    private final List<Status> dataToWrite;
 
 
     public JsonReader(String path){
-        List<Status> dataToWrite = readData(path);
-        writeDataToCsv(dataToWrite);
+        dataToWrite = readData(path);
     }
 
-    private void writeDataToCsv(List<Status> dataToWrite){
-        try (CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_FILE_NAME))) {
-            writer.writeAll(convertToStringArrayList(dataToWrite));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private List<Status> readData(String path){
         File jsonFile = new File(path);
@@ -46,12 +40,6 @@ public class JsonReader {
         return dataToFilter.stream()
                 .filter(status -> status.getKontaktTs().after(Timestamp.valueOf(TIMESTAMP_FILTER)))
                 .sorted(new StatusComparator())
-                .collect(Collectors.toList());
-    }
-
-    private List<String[]> convertToStringArrayList(List<Status> dataToConvert){
-        return dataToConvert.stream()
-                .map(Status::toStringArray)
                 .collect(Collectors.toList());
     }
 }

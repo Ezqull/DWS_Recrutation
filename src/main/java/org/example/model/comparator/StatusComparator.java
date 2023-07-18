@@ -1,4 +1,6 @@
-package org.example;
+package org.example.model.comparator;
+
+import org.example.model.Status;
 
 import java.util.Comparator;
 
