@@ -25,6 +25,10 @@ public class Status {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp kontaktTs;
 
+    /**
+     * Converts the Status object to a string array.
+     * @return The Status object as a string array.
+     */
     public String[] toStringArray(){
         return new String[]{String.valueOf(kontaktId), String.valueOf(klientId), String.valueOf(pracownikId), status, String.valueOf(kontaktTs)};
     }
